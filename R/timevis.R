@@ -471,18 +471,21 @@ timevis <- function(data, groups, showZoom = TRUE, zoomFactor = 0.5, fit = TRUE,
 
   columns <- tv_normalize_columns(columns, autoDates, rowMinHeight)
 
-  if (!is.null(ties)) {
-    if (!is.data.frame(ties)) {
-      stop("timevis: 'ties' must be a data.frame", call. = FALSE)
-    }
-    if (nrow(ties) > 0 &&
-        (!("from" %in% names(ties)) || !("to" %in% names(ties)))) {
-      stop("timevis: 'ties' must contain 'from' and 'to' columns", call. = FALSE)
+  ties_norm   <- tv_normalize_ties(ties)
+  tiesOnClick <- ties_norm$onClick
+  ties_df     <- ties_norm$data
+  if (!is.null(ties_df)) {
+    if (nrow(ties_df) > 0 &&
+        (!("from" %in% names(ties_df)) || !("to" %in% names(ties_df)))) {
+      stop("timevis: 'ties' must contain 'from' and 'to' columns",
+           call. = FALSE)
     }
     ties <- dataframeToD3(data.frame(
-      from = as.character(ties$from),
-      to   = as.character(ties$to)
+      from = as.character(ties_df$from),
+      to   = as.character(ties_df$to)
     ))
+  } else {
+    ties <- NULL
   }
 
   # forward options using x
@@ -497,7 +500,8 @@ timevis <- function(data, groups, showZoom = TRUE, zoomFactor = 0.5, fit = TRUE,
     timezone = timezone,
     crosstalk = crosstalk_opts,
     columns = columns,
-    ties = ties
+    ties = ties,
+    tiesOnClick = tiesOnClick
   )
 
   # Allow a list of API functions to be called on the timevis after
@@ -530,6 +534,31 @@ timevis <- function(data, groups, showZoom = TRUE, zoomFactor = 0.5, fit = TRUE,
     elementId = elementId,
     dependencies = deps
   )
+}
+
+# Normalise the `ties` argument into a list of:
+#   data  : data.frame with from/to (or NULL)
+#   onClick: single logical (default FALSE)
+tv_normalize_ties <- function(ties) {
+  if (is.null(ties)) {
+    return(list(data = NULL, onClick = FALSE))
+  }
+  if (is.data.frame(ties)) {
+    return(list(data = ties, onClick = FALSE))
+  }
+  if (is.list(ties)) {
+    if (!is.data.frame(ties$data)) {
+      stop("timevis: 'ties$data' must be a data.frame", call. = FALSE)
+    }
+    if (!is.logical(ties$onClick) || length(ties$onClick) != 1 ||
+        is.na(ties$onClick)) {
+      stop("timevis: 'ties$onClick' must be a single TRUE or FALSE",
+           call. = FALSE)
+    }
+    return(list(data = ties$data, onClick = ties$onClick))
+  }
+  stop("timevis: 'ties' must be a data.frame or a list(data, onClick)",
+       call. = FALSE)
 }
 
 #' Shiny bindings for timevis
