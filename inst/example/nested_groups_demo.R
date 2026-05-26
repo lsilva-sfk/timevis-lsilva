@@ -43,7 +43,7 @@ ties <- data.frame(
 
 ui <- fluidPage(
   titlePanel("timevis: native multi-column collapsible groups"),
-  p("Folders collapse via caret. Start/End columns auto-derived from items. Arrows show task dependencies."),
+  p("Folders collapse via caret. Start/End columns auto-derived from items. Click a task to reveal its dependency arrows."),
   timevisOutput("tl", height = "520px")
 )
 
@@ -59,7 +59,7 @@ server <- function(input, output, session) {
         list(field = "status",  header = "Status", width = 110)
       ),
       autoDates = TRUE, rowMinHeight = 36,
-      ties      = ties,
+      ties      = list(data = ties, onClick = TRUE),
       options = list(stack = TRUE, orientation = "top",
                      margin = list(item = 6, axis = 20))
     )
