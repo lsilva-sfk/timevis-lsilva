@@ -127,3 +127,38 @@ test_that("timevis() rejects ties list with missing or invalid data", {
     "'from' and 'to'"
   )
 })
+
+test_that("setTies accepts list(data, onClick = TRUE) and forwards both", {
+  ties_arg <- list(
+    data    = data.frame(from = 1L, to = 2L),
+    onClick = TRUE
+  )
+  w <- timevis(data = items) %>% setTies(ties_arg)
+  call <- w$x$api[[length(w$x$api)]]
+  expect_equal(call$method, "setTies")
+  expect_true(is.list(call$ties))
+  expect_length(call$ties, 1)
+  expect_equal(call$ties[[1]]$from, "1")
+  expect_true(isTRUE(call$tiesOnClick))
+})
+
+test_that("setTies with bare df sends tiesOnClick FALSE", {
+  w <- timevis(data = items) %>% setTies(data.frame(from = 1, to = 2))
+  call <- w$x$api[[length(w$x$api)]]
+  expect_false(isTRUE(call$tiesOnClick))
+})
+
+test_that("setTies(NULL) sends NULL ties and FALSE tiesOnClick", {
+  w <- timevis(data = items) %>% setTies(NULL)
+  call <- w$x$api[[length(w$x$api)]]
+  expect_null(call$ties)
+  expect_false(isTRUE(call$tiesOnClick))
+})
+
+test_that("setTies rejects bad list form", {
+  expect_error(
+    timevis(data = items) %>%
+      setTies(list(data = data.frame(from = 1, to = 2), onClick = "x")),
+    "'ties\\$onClick' must be a single TRUE or FALSE"
+  )
+})

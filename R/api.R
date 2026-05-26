@@ -530,12 +530,23 @@ setColumns <- function(id, columns, autoDates = FALSE, rowMinHeight = 36) {
 #' @export
 setTies <- function(id, ties) {
   method <- "setTies"
-  if (!is.null(ties)) {
+  ties_norm   <- tv_normalize_ties(ties)
+  tiesOnClick <- ties_norm$onClick
+  ties_df     <- ties_norm$data
+  if (!is.null(ties_df)) {
+    if (nrow(ties_df) > 0 &&
+        (!("from" %in% names(ties_df)) || !("to" %in% names(ties_df)))) {
+      stop("timevis: 'ties' must contain 'from' and 'to' columns",
+           call. = FALSE)
+    }
     ties <- dataframeToD3(data.frame(
-      from = as.character(ties$from),
-      to   = as.character(ties$to)
+      from = as.character(ties_df$from),
+      to   = as.character(ties_df$to)
     ))
+  } else {
+    ties <- NULL
   }
+  rm(ties_norm, ties_df)
   callJS()
 }
 
