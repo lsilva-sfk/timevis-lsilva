@@ -9,8 +9,10 @@ setTies(id, ties)
 \arguments{
 \item{id}{Timeline id or a \code{timevis} object (the output from \code{timevis()})}
 
-\item{ties}{A data.frame with \code{from} and \code{to} columns of item IDs,
-or \code{NULL} to remove all ties.}
+\item{ties}{Either a data.frame with \code{from} and \code{to} columns of
+item IDs (always-on ties), a list of the form
+\code{list(data = <df>, onClick = TRUE)} for click-to-reveal mode, or
+\code{NULL} to remove all ties.}
 }
 \description{
 Draws directed three-segment (horizontal-vertical-horizontal) connector

@@ -255,6 +255,25 @@ timevis(data = items, ties = ties)
 
 Ties are automatically redrawn when the user pans or zooms, and are hidden when either endpoint belongs to a collapsed nested group. You can update ties after creation with `setTies()`.
 
+#### Click-to-reveal ties
+
+Pass `ties` as a list with `onClick = TRUE` to hide ties until an item is clicked. Only ties touching the current selection are drawn (union across multi-select; nothing is drawn when nothing is selected):
+
+``` r
+timevis(
+  data = data.frame(
+    id      = 1:3,
+    content = c("Plan", "Build", "Ship"),
+    start   = c("2016-01-10", "2016-01-14", "2016-01-20"),
+    end     = c("2016-01-13", "2016-01-19", "2016-01-22")
+  ),
+  ties = list(
+    data    = data.frame(from = c(1, 2), to = c(2, 3)),
+    onClick = TRUE
+  )
+)
+```
+
 <h2 id="manipulate-api">
 
 Functions to manipulate a timeline

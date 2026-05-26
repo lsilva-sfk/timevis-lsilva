@@ -17,6 +17,7 @@
   right edge of the source item to the left edge of the target item. Items may
   appear in multiple ties. Ties are automatically redrawn on pan, zoom, and
   data changes, and are hidden when either endpoint is in a collapsed group.
+- New click-to-reveal ties mode: pass `ties = list(data = <df>, onClick = TRUE)` to `timevis()` or `setTies()` so ties are hidden until an item is clicked. Only ties touching the current selection are drawn.
 
 # timevis 2.1.0 (2022-10-22)
 

@@ -97,11 +97,20 @@ over their \code{nestedGroups}).}
 \item{rowMinHeight}{Minimum row height in pixels when \code{columns} is used.
 Prevents empty rows from collapsing. Default \code{36}.}
 
-\item{ties}{Optional data.frame with \code{from} and \code{to} columns
-specifying directed connector lines between items. Each row draws a
-three-segment (horizontal-vertical-horizontal) line from the right edge of
-the \code{from} item to the left edge of the \code{to} item. An item may
-appear in multiple rows. See also \code{\link[timevis]{setTies}}.}
+\item{ties}{Optional connector lines between items. Either:
+\itemize{
+\item a data.frame with \code{from} and \code{to} columns of item IDs
+(ties are always shown), or
+\item a list of the form
+\code{list(data = <df with from/to>, onClick = TRUE)}: ties are hidden
+until an item is clicked; only ties touching the current selection are
+drawn (union across multi-select; nothing drawn when nothing is
+selected).
+}
+Each tie draws a three-segment (horizontal-vertical-horizontal) line from
+the right edge of the \code{from} item to the left edge of the \code{to}
+item. An item may appear in multiple rows. See also
+\code{\link[timevis]{setTies}}.}
 }
 \value{
 A timeline visualization \code{htmlwidgets} object

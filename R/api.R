@@ -515,8 +515,10 @@ setColumns <- function(id, columns, autoDates = FALSE, rowMinHeight = 36) {
 #' lines between pairs of items, useful for showing dependencies or sequences.
 #'
 #' @param id Timeline id or a \code{timevis} object (the output from \code{timevis()})
-#' @param ties A data.frame with \code{from} and \code{to} columns of item IDs,
-#'   or \code{NULL} to remove all ties.
+#' @param ties Either a data.frame with \code{from} and \code{to} columns of
+#'   item IDs (always-on ties), a list of the form
+#'   \code{list(data = <df>, onClick = TRUE)} for click-to-reveal mode, or
+#'   \code{NULL} to remove all ties.
 #' @examples
 #' \dontrun{
 #' timevis(
