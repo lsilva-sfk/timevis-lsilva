@@ -23,6 +23,7 @@ HTMLWidgets.widget({
     var lastGroupsArray = null;     // raw groups array last passed to timeline.setGroups
     var applyingColumns = false;    // re-entry guard for setGroups <-> applyColumns
     var tiesData = null;            // array of {from, to} tie objects or null
+    var tiesOnClick = false;        // when true, only draw ties touching the current selection
     var tiesSvg = null;             // SVG overlay element for drawing tie lines
     var tiesReady = false;          // false during renderValue setup; suppresses changed-driven redraws
     var drawTiesPending = false;    // rAF debounce flag for changed-driven redraws
@@ -71,6 +72,9 @@ HTMLWidgets.widget({
         // Update ties data before any 'changed' events fire during render
         if ('ties' in opts) {
           tiesData = opts.ties || null;
+        }
+        if ('tiesOnClick' in opts) {
+          tiesOnClick = !!opts.tiesOnClick;
         }
 
         if (!initialized) {
@@ -190,6 +194,11 @@ HTMLWidgets.widget({
                 that.drawTies();
               });
             }
+          });
+
+          // Redraw ties whenever the selection changes (independent of Shiny mode).
+          timeline.on('select', function() {
+            that.drawTies();
           });
 
           // if a crosstalk dataframe is used, initialize crosstalk
@@ -652,6 +661,9 @@ HTMLWidgets.widget({
       },
       setTies : function(params) {
         tiesData = params.ties || null;
+        if ('tiesOnClick' in params) {
+          tiesOnClick = !!params.tiesOnClick;
+        }
         this.drawTies();
       },
       drawTies : function() {
@@ -665,6 +677,14 @@ HTMLWidgets.widget({
         }
         if (!tiesData || !tiesData.length) return;
 
+        var filterIds = null;
+        if (tiesOnClick) {
+          var sel = timeline.getSelection() || [];
+          if (!sel.length) return;
+          filterIds = {};
+          for (var k = 0; k < sel.length; k++) filterIds[String(sel[k])] = true;
+        }
+
         var visCenterEl = container.querySelector('.vis-panel.vis-center');
         if (!visCenterEl) return;
         var centerRect = visCenterEl.getBoundingClientRect();
@@ -674,6 +694,9 @@ HTMLWidgets.widget({
 
         for (var i = 0; i < tiesData.length; i++) {
           var tie = tiesData[i];
+          if (filterIds &&
+              !filterIds[String(tie.from)] &&
+              !filterIds[String(tie.to)]) continue;
           var fromEl = getItemDomEl(tie.from);
           var toEl   = getItemDomEl(tie.to);
           if (!fromEl || !toEl) continue;
