@@ -478,6 +478,8 @@ setGroups <- function(id, data) {
 #'   full description of each field.
 #' @param autoDates If \code{TRUE}, virtual \code{"start"} / \code{"end"}
 #'   fields are derived from items. Default \code{FALSE}.
+#' @param rowMinHeight Minimum row height in pixels. Prevents empty rows from
+#'   collapsing. Default \code{36}.
 #' @examples
 #' \dontrun{
 #' items <- data.frame(
@@ -504,6 +506,36 @@ setGroups <- function(id, data) {
 setColumns <- function(id, columns, autoDates = FALSE, rowMinHeight = 36) {
   method <- "setColumns"
   columns <- tv_normalize_columns(columns, autoDates, rowMinHeight)
+  callJS()
+}
+
+#' Set or update the tie connector lines between items on a timeline
+#'
+#' Draws directed three-segment (horizontal-vertical-horizontal) connector
+#' lines between pairs of items, useful for showing dependencies or sequences.
+#'
+#' @param id Timeline id or a \code{timevis} object (the output from \code{timevis()})
+#' @param ties A data.frame with \code{from} and \code{to} columns of item IDs,
+#'   or \code{NULL} to remove all ties.
+#' @examples
+#' \dontrun{
+#' timevis(
+#'   data.frame(id = 1:3,
+#'              content = c("Plan", "Build", "Ship"),
+#'              start = c("2016-01-10", "2016-01-14", "2016-01-20"),
+#'              end   = c("2016-01-13", "2016-01-19", "2016-01-22"))
+#' ) %>%
+#'   setTies(data.frame(from = c(1, 2), to = c(2, 3)))
+#' }
+#' @export
+setTies <- function(id, ties) {
+  method <- "setTies"
+  if (!is.null(ties)) {
+    ties <- dataframeToD3(data.frame(
+      from = as.character(ties$from),
+      to   = as.character(ties$to)
+    ))
+  }
   callJS()
 }
 
