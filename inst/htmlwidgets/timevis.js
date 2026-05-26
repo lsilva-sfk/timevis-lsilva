@@ -603,7 +603,7 @@ HTMLWidgets.widget({
         // native approach that keeps the JS model and DOM in sync, preserving
         // scroll-to-zoom and row/bar alignment.
         if (lastGroupsArray) {
-          var ROW_MIN_H = 36;
+          var ROW_MIN_H = colSpec.rowMinHeight || 36;
           var groupsForTl = lastGroupsArray.map(function(g) {
             return (g.height == null || g.height < ROW_MIN_H)
               ? Object.assign({}, g, { height: ROW_MIN_H })

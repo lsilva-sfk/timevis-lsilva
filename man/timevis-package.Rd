@@ -21,7 +21,6 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Dean Attali \email{daattali@gmail.com} (\href{https://orcid.org/0000-0002-5645-3493}{ORCID}) (R interface)
   \item  Almende B.V. (vis.js Timeline library, https://visjs.github.io/vis-timeline/docs/timeline/) [copyright holder]
 }
 
